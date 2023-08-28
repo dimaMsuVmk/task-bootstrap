@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User By Id </title>
+  <style>
+    html * {
+      font-size: 26px;
+      color: green;
+      font-family: Roboto;
+    }
+    table, td, th {
+      border: 1px solid grey;
+    }
+    td {
+      height: 80px;
+      width: 200px;
+      text-align: center;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<!--<a href="/logout">Logout</a>-->
+<!--После добавление в login-form отправки CSRF-token Заменим href="/logout" на форму
+    тк теперь у нас POST запрос-->
+<form th:action="@{/logout}" th:method="POST">
+  <input type="submit" value="Logout">
+</form>
+<hr/>
+<table>
+  <thead><b>Info about User Authenticated </b>
+  <tr>
+    <th>FirstName</th>
+    <th>LastName</th>
+    <th>Email</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td th:text="${user.firstName}"> FirstName </td>
+    <td th:text="${user.lastName}"> LastName </td>
+    <td th:text="${user.email}"> Email </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
