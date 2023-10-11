@@ -32,19 +32,24 @@
 <table>
   <thead><b>List of Users:</b>
   <tr>
+    <th>Id</th>
     <th>FirstName</th>
     <th>LastName</th>
     <th>Email</th>
+    <th>Role</th>
     <th>Edit</th>
     <th>Delete</th>
-    <th>Role</th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="user : ${users}">
+    <td th:text="${user.id}"> Id </td>
     <td th:text="${user.firstName}"> FirstName </td>
     <td th:text="${user.lastName}"> LastName </td>
     <td th:text="${user.email}"> Email </td>
+    <div th:each="role : ${user.roles}">
+      <td th:text="${role.toString()}">Role Name</td>
+    </div>
 <!--    <td th:text="${user.password}">Password </td>-->
     <td>
       <a th:href="@{/admin/{id}/edit(id=${user.getId()})}">Edit</a>
@@ -54,9 +59,6 @@
         <input type="submit" value="Delete">
       </form>
     </td>
-      <div th:each="role : ${user.roles}">
-        <td th:text="${role.toString()}">Role Name</td>
-      </div>
   </tr>
   </tbody>
 </table>

@@ -36,7 +36,8 @@ public class AdminController {
             model.addAttribute("user", model.getAttribute("errorUser"));
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("allRoles", roleRepository.findAll());
-        return "users";
+        return "admin-panel";
+//      return "users";
     }
 
     @GetMapping("/users/{id}")
@@ -49,14 +50,15 @@ public class AdminController {
     @GetMapping("/admin/{id}/edit")
     public String edit(@PathVariable("id") long id, Model model
     ) {
-
-        if (!model.containsAttribute("errorUser")) {
-            model.addAttribute("user", userService.getUserById(id));
-        } else {
-            model.addAttribute("user", model.getAttribute("errorUser"));
-        }
+//        if (!model.containsAttribute("errorUser")) {
+//            model.addAttribute("user", userService.getUserById(id));
+//        } else {
+//            model.addAttribute("user", model.getAttribute("errorUser"));
+//        }
+        model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("allRoles", roleRepository.findAll());
         return "edit";
+
     }
 
     @PatchMapping("/admin/{id}")
@@ -68,14 +70,13 @@ public class AdminController {
             if (role.equals("ROLE_ADMIN")) updateUser.getRoles().add(roleRepository.getRoleByName("ROLE_ADMIN"));
             if (role.equals("ROLE_GUEST")) updateUser.getRoles().add(roleRepository.getRoleByName("ROLE_GUEST"));
         }
-        if (bindingResult.hasErrors()) {
-//            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-//            redirectAttributes.addFlashAttribute("errorUser", updateUser);
-//            return "redirect:/admin/" + id + "/edit";
-
-            model.addAttribute("allRoles", roleRepository.findAll());
-            return "/edit";
-        }
+//        if (bindingResult.hasErrors()) {
+////            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+////            redirectAttributes.addFlashAttribute("errorUser", updateUser);
+////            return "redirect:/admin/" + id + "/edit";
+//            model.addAttribute("allRoles", roleRepository.findAll());
+//            return "edit";
+//        }
         if (updateUser.getPassword().length() != 0) {
             String encodedPassword = passwordEncoder.encode(updateUser.getPassword());
             updateUser.setPassword(encodedPassword);
