@@ -63,7 +63,8 @@ public class AdminController {
 
     @PatchMapping("/admin/{id}")
     public String updatePerson(@ModelAttribute("user") @Validated User updateUser, BindingResult bindingResult,
-                               @RequestParam String[] selectedRoles, @RequestParam Long id,
+                               @RequestParam String[] selectedRoles,
+                               @RequestParam Long id,
                                RedirectAttributes redirectAttributes,Model model) {
         for (String role : selectedRoles) {
             if (role.equals("ROLE_USER")) updateUser.getRoles().add(roleRepository.getRoleByName("ROLE_USER"));
@@ -77,7 +78,7 @@ public class AdminController {
 //            model.addAttribute("allRoles", roleRepository.findAll());
 //            return "edit";
 //        }
-        if (updateUser.getPassword().length() != 0) {
+        if (updateUser.getPassword()!=null && updateUser.getPassword().length() != 0) {
             String encodedPassword = passwordEncoder.encode(updateUser.getPassword());
             updateUser.setPassword(encodedPassword);
         } else updateUser.setPassword(userService.getEncodedPassword(id));

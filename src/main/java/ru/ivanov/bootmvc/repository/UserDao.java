@@ -18,4 +18,5 @@ public interface UserDao {
     void save(User user);
     String getPassword(Long id);
     Optional<User> findByUsername(String userName);
+    Optional<User> findByEmail(String email);
 }

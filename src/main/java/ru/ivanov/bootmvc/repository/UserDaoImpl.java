@@ -56,4 +56,12 @@ public class UserDaoImpl implements UserDao {
                 .setParameter("userName", userName)
                 .getSingleResult());
     }
+    @Override
+    public Optional<User> findByEmail(String email) {
+        //getSingleResult() - бросит ошибку если такого user нет
+        return Optional.of((User) entityManager
+                .createQuery("from User u join fetch u.roles where u.email = :email")
+                .setParameter("email", email)
+                .getSingleResult());
+    }
 }
