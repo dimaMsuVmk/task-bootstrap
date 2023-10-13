@@ -1,12 +1,11 @@
-package ru.ivanov.bootmvc.repository;
+package ru.ivanov.bootmvc.Dao;
 
 import ru.ivanov.bootmvc.model.Role;
-import ru.ivanov.bootmvc.model.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public interface RoleRepository {
+public interface RoleDao {
     List<Role> findAll();
     Role findRoleByAuthority(String authority) throws NoSuchElementException;
     void save(Role role);

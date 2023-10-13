@@ -1,4 +1,4 @@
-package ru.ivanov.bootmvc.repository;
+package ru.ivanov.bootmvc.Dao;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Repository
-public class RoleRepositoryImpl implements RoleRepository {
+public class RoleDaoImpl implements RoleDao {
 
     @PersistenceContext
     private EntityManager entityManager;

@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.ivanov.bootmvc.model.Role;
 import ru.ivanov.bootmvc.model.User;
-import ru.ivanov.bootmvc.repository.RoleRepository;
+import ru.ivanov.bootmvc.Dao.RoleDao;
 import ru.ivanov.bootmvc.service.UserService;
 
 @Component
@@ -13,10 +13,10 @@ public class Init {
     public static final Role ADMIN = new Role("ROLE_ADMIN");
     public static final Role GUEST = new Role("ROLE_GUEST");
     private final UserService userService;
-    private final RoleRepository roleRepository;
+    private final RoleDao roleRepository;
     private final PasswordEncoder encoder;
 
-    public Init(UserService userService, RoleRepository roleRepository, PasswordEncoder encoder) {
+    public Init(UserService userService, RoleDao roleRepository, PasswordEncoder encoder) {
         this.userService = userService;
         this.roleRepository = roleRepository;
         this.encoder = encoder;

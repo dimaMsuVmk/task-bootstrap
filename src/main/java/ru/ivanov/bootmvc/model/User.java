@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,12 +21,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //@Pattern(regexp = "[A-Za-z]{2,15}", message = "firstName should be between 2 and 15 latin characters")
     @Size(min = 2,max = 15)
     @Column(name = "name")
     private String firstName;
 
-    //@Pattern(regexp = "[A-Za-z]{2,15}", message = "lastName should be between 2 and 15 latin characters")
     @Size(min = 2,max = 15)
     @Column(name = "last_name")
     private String lastName;
@@ -35,9 +32,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     @NotEmpty(message = "Email should not be empty")
     @Email(message = "email incorrect")
-    //@Email(message = "Email should be valid")
     private String email;
-    //@NotEmpty(message = "Password should not be empty")
     private String password;
     //@NotEmpty
     @Fetch(FetchMode.SUBSELECT)

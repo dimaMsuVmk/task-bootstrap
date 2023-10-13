@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.ivanov.bootmvc.model.User;
-import ru.ivanov.bootmvc.repository.RoleRepository;
+import ru.ivanov.bootmvc.Dao.RoleDao;
 import ru.ivanov.bootmvc.service.UserService;
 
 import java.security.Principal;
@@ -18,10 +18,10 @@ import java.security.Principal;
 public class AdminController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
+    private final RoleDao roleRepository;
 
     @Autowired
-    public AdminController(UserService userService, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public AdminController(UserService userService, PasswordEncoder passwordEncoder, RoleDao roleRepository) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
@@ -40,29 +40,8 @@ public class AdminController {
         model.addAttribute("allRoles", roleRepository.findAll());
         model.addAttribute("userPrincipal",userService.findByUserName(principal.getName()));
         return "admin-panel";
-//      return "users";
     }
 
-    @GetMapping("/users/{id}")
-    public String getById(@PathVariable("id") long id, Model model) {
-        model.addAttribute("id", id);
-        model.addAttribute("user", userService.getUserById(id));
-        return "userById";
-    }
-
-    @GetMapping("/admin/{id}/edit")
-    public String edit(@PathVariable("id") long id, Model model
-    ) {
-//        if (!model.containsAttribute("errorUser")) {
-//            model.addAttribute("user", userService.getUserById(id));
-//        } else {
-//            model.addAttribute("user", model.getAttribute("errorUser"));
-//        }
-        model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("allRoles", roleRepository.findAll());
-        return "edit";
-
-    }
 
     @PatchMapping("/admin/{id}")
     public String updatePerson(@ModelAttribute("user") User updateUser,

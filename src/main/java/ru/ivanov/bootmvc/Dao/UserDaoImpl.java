@@ -1,4 +1,4 @@
-package ru.ivanov.bootmvc.repository;
+package ru.ivanov.bootmvc.Dao;
 
 import org.springframework.stereotype.Repository;
 import ru.ivanov.bootmvc.model.User;
