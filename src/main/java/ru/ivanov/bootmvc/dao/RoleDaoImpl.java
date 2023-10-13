@@ -1,4 +1,4 @@
-package ru.ivanov.bootmvc.Dao;
+package ru.ivanov.bootmvc.dao;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package ru.ivanov.bootmvc.Dao;
+package ru.ivanov.bootmvc.dao;
 
 import ru.ivanov.bootmvc.model.User;
 

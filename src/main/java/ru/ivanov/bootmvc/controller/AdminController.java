@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.ivanov.bootmvc.model.User;
-import ru.ivanov.bootmvc.Dao.RoleDao;
+import ru.ivanov.bootmvc.dao.RoleDao;
 import ru.ivanov.bootmvc.service.UserService;
 
 import java.security.Principal;

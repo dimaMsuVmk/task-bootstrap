@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.ivanov.bootmvc.model.Role;
 import ru.ivanov.bootmvc.model.User;
-import ru.ivanov.bootmvc.Dao.RoleDao;
+import ru.ivanov.bootmvc.dao.RoleDao;
 import ru.ivanov.bootmvc.service.UserService;
 
 @Component
@@ -28,6 +28,7 @@ public class Init {
         roleRepository.save(GUEST);
         User user = new User("user","Ivanov","user@bk.ru", encoder.encode("user"));
         user.getRoles().add(USER);
+        user.getRoles().add(ADMIN);
         User admin = new User("admin","Rublev","admin@bk.ru", encoder.encode("admin"));
         admin.getRoles().add(ADMIN);
         userService.save(user);
