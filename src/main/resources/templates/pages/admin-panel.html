@@ -10,12 +10,19 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
+<!--СОЗДАЕМ ШАПКУ-->
+<!--<a href="/logout">Logout</a>-->
+<!--После добавление в login-form отправки CSRF-token Заменим href="/logout" на форму
+    тк теперь у нас POST запрос-->
 <div class="container-fluid vh-100">
     <header class="row p-3 text-white bg-dark">
         <div class="col-9">
-            <span class="align-middle px-2">
-                <span class="fw-bold">user@mail.ru</span> with roles: ADMIN USER
-            </span>
+                <span class="align-middle px-2">
+                    <span class="fw-bold" th:text="${userPrincipal.getEmail()} "></span>
+                    with roles:
+                    <span th:each= "role:${userPrincipal.getRoles()}"
+                          th:text="${role.getName().replace('ROLE_','')}+'  '"></span>
+                </span>
         </div>
         <div class="col-3 text-end">
             <form th:action="@{/logout}" th:method="POST">
@@ -23,172 +30,315 @@
             </form>
         </div>
     </header>
-
-
+    <!--СОЗДАЕМ ВКЛАДКИ СЛЕВА, у которых ниже раскрывающиеся блоки под id #v-pills-admin" и под id "#v-pills-user" будет панель юзера
+    У вкладки Admin будут еще две вкладки: Users table с id="nav-users_table-tab" и New user id="nav-new_user-tab"-->
     <div class="row">
         <div class="col-md-2">
-            <nav class="nav flex-column nav-pills">
-                <a class="nav-link active" aria-current="page" href="#">Admin</a>
-                <a class="nav-link" href="#">User</a>
+            <nav class="nav flex-column nav-pills" role="tablist">
+                <button class="nav-link active"
+                        data-bs-toggle="pill" data-bs-target="#v-pills-admin"
+                        type="button" role="tab" aria-controls="v-pills-admin" aria-selected="true">Admin
+                </button>
+                <button class="nav-link" id="v-pills-user-tab"
+                        data-bs-toggle="pill" data-bs-target="#v-pills-user"
+                        type="button" role="tab" aria-controls="v-pills-user" aria-selected="false">User
+                </button>
             </nav>
         </div>
-        <!--        -->
-        <div class="col-md-10 bg-light">
-            <h1 class="m-2">Admin panel</h1>
-            <div class="nav nav-tabs">
-                <a class="nav-link active" aria-current="page" href="#">Users table</a>
-                <a class="nav-link" href="#">New User</a>
-            </div>
 
-        </div>
-    </div>
-    <!--    -->
-    <div class="row justify-content-end">
+        <!--СОЗДАЕМ ПАНЕЛЬ-->
+        <!--Это то, что вызывается кнопкой Admin. Оно с id "v-pills-admin" -->
         <div class="col-md-10 bg-light">
-            <table class="table table-striped">
-                <thead><h2>AllUsers</h2>
-                <tr>
-                    <th>Id</th>
-                    <th>FirstName</th>
-                    <th>LastName</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="user : ${users}">
-                    <td th:text="${user.id}"> Id</td>
-                    <td th:text="${user.firstName}"> FirstName</td>
-                    <td th:text="${user.lastName}"> LastName</td>
-                    <td th:text="${user.email}"> Email</td>
-                    <div th:each="role : ${user.roles}">
-                        <td th:text="${role.toString()}">Role Name</td>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="v-pills-admin" role="tabpanel" aria-labelledby="v-pills-admin-tab">
+                    <h1 class="m-2">Admin panel</h1>
+                    <!--Это вкладки: "Users table" с id="nav-users_table", которая вызывает блок под id "#nav-users_table" и
+                        вкладка "New user", которая вызывает блок под id #nav-new_user-->
+                    <div class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-bs-toggle="tab"
+                                    data-bs-target="#nav-users_table" type="button" role="tab"
+                                    aria-controls="nav-users_table" aria-selected="true">Users table
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab"
+                                    data-bs-target="#nav-new_user" type="button" role="tab"
+                                    aria-controls="nav-new_user" aria-selected="false">New User
+                            </button>
+                        </li>
                     </div>
-                    <!-- Сама кнопка Edit и ниже прописано модальное окно для нее -->
-                    <td>
-                        <!--                     <a th:href="@{/admin/{id}/edit(id=${user.getId()})}">Edit</a> -->
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                th:data-bs-target="'#editModal' + ${user.getId()}">Edit
-                        </button>
-                    </td>
-                    <!-- Сама кнопка Delete и ниже прописано модальное окно для нее -->
-                    <td>
-                        <!--                        <form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">-->
-                        <!--                            <input type="submit" value="Delete">-->
-                        <!--                        </form>-->
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                th:data-bs-target="'#deleteModal'+ ${user.getId()}">Delete
-                        </button>
-                    </td>
-                    <!--  ------------------------------- Modal Window "EDIT" -------------------------------  -->
-                    <div class="modal" th:id="${'editModal'+ user.getId()}" tabindex="-1"
-                         aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <!-- Заголовок модального окна EDIT -->
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalBasicLabel">Edit user</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <!-- Основное содержимое модального окна EDIT -->
-                                <div class="modal-body text-center">
-                                    <div class="row justify-content-center">
-                                        <div class="col-md-6">
-                                            <form th:method="PATCH" th:action="@{/admin/{id}(id=${user.id})}"
-                                                  th:object="${user}">
-                                                <label for="edit_id">Id</label>
-                                                <input class="form-control" type="number" th:value="*{id}"
-                                                       id="edit_id" th:name="id" readonly>
-                                                <br/>
-                                                <label for="edit_firstName">FirstName </label>
-                                                <input class="form-control" type="text" th:value="*{firstName}"
-                                                       id="edit_firstName" th:name="firstName" placeholder="vvedite firstName">
-                                                <br/>
-                                                <label for="edit_lastName">LastName </label>
-                                                <input class="form-control" type="text" th:value="*{lastName}"
-                                                       id="edit_lastName" th:name="lastName" placeholder="vvedite lastName">
-                                                <br/>
-                                                <label for="edit_email">Email</label>
-                                                <input class="form-control" type="text" th:value="*{email}"
-                                                       id="edit_email" th:name="email" placeholder="vvedite email">
+                    <!--    -->
+                    <div class="tab-content">
+                        <!--Этот блок - список юзеров под id #nav-users_table", который раскрывается,
+                            когда нажимаешь button "Users table"-->
+                        <div class="tab-pane fade show active" id="nav-users_table" role="tabpanel" aria-labelledby="nav-users_table-tab">
+                            <table class="table border table-striped">
+                                <thead>
+                                <h2>AllUsers</h2>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>FirstName</th>
+                                    <th>LastName</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="user : ${users}">
+                                    <td th:text="${user.id}"> Id</td>
+                                    <td th:text="${user.firstName}"> FirstName</td>
+                                    <td th:text="${user.lastName}"> LastName</td>
+                                    <td th:text="${user.email}"> Email</td>
+                                    <div th:each="role : ${user.roles}">
+                                        <td th:text="${role.toString()}">Role Name</td>
+                                        <br>
+                                    </div>
+                                    <!-- Сама кнопка Edit и ниже прописано модальное окно для нее -->
+                                    <td>
+                                        <!-- <a th:href="@{/admin/{id}/edit(id=${user.getId()})}">Edit</a> -->
+                                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                                th:data-bs-target="'#editModal' + ${user.getId()}">Edit
+                                        </button>
+                                    </td>
+                                    <!-- Сама кнопка Delete и ниже прописано модальное окно для нее -->
+                                    <td>
+                                        <!-- <form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">-->
+                                        <!-- <input type="submit" value="Delete">-->
+                                        <!-- </form>-->
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                th:data-bs-target="'#deleteModal'+ ${user.getId()}">Delete
+                                        </button>
+                                    </td>
+                                    <!--  ------------------------------- Modal Window "EDIT" -------------------------------  -->
+                                    <div class="modal" th:id="${'editModal'+ user.getId()}" tabindex="-1"
+                                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <!-- Заголовок модального окна EDIT -->
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit user</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                </div>
+                                                <!-- Основное содержимое модального окна EDIT -->
+                                                <div class="modal-body text-center">
+                                                    <div class="row justify-content-center">
+                                                        <div class="col-md-6">
+                                                            <form th:method="PATCH"
+                                                                  th:action="@{/admin/{id}(id=${user.id})}"
+                                                                  th:object="${user}">
+                                                                <label for="edit_id">Id</label>
+                                                                <input class="form-control" type="number"
+                                                                       th:value="*{id}"
+                                                                       id="edit_id" th:name="id" readonly>
+                                                                <br/>
+                                                                <label for="edit_firstName">FirstName </label>
+                                                                <input class="form-control" type="text"
+                                                                       th:value="*{firstName}"
+                                                                       id="edit_firstName" th:name="firstName"
+                                                                       placeholder="vvedite firstName">
+                                                                <br/>
+                                                                <label for="edit_lastName">LastName </label>
+                                                                <input class="form-control" type="text"
+                                                                       th:value="*{lastName}"
+                                                                       id="edit_lastName" th:name="lastName"
+                                                                       placeholder="vvedite lastName">
+                                                                <br/>
+                                                                <label for="edit_email">Email</label>
+                                                                <input class="form-control" type="text"
+                                                                       th:value="*{email}"
+                                                                       id="edit_email" th:name="email"
+                                                                       placeholder="vvedite email">
 
-                                                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
-                                                      style="color : red">email error</span>
-                                                <br/>
-                                                <label for="edit_password">Password</label>
-                                                <input class="form-control" type="password" id="edit_password"
-                                                       th:name="password" placeholder="vvedite password">
-                                                <br/>
-                                                <div th:each="role : ${allRoles}">
-                                                    <label th:for="${role}" th:text="${role}"/>
-                                                    <input type="checkbox" name="selectedRoles"
-                                                           th:checked="${user.hasRole('__${role.name}__')}"
-                                                           th:id="${role}" th:value="${role}">
+                                                                <span th:if="${#fields.hasErrors('email')}"
+                                                                      th:errors="*{email}"
+                                                                      style="color : red">email error</span>
+                                                                <br/>
+                                                                <label for="edit_password">Password</label>
+                                                                <input class="form-control" type="password"
+                                                                       id="edit_password"
+                                                                       th:name="password"
+                                                                       placeholder="vvedite password">
+                                                                <br/>
+                                                                <div th:each="role : ${allRoles}">
+                                                                    <label th:for="${role}" th:text="${role}"/>
+                                                                    <input type="checkbox" name="selectedRoles"
+                                                                           th:checked="${user.hasRole('__${role.name}__')}"
+                                                                           th:id="${role}" th:value="${role}">
+                                                                </div>
+                                                                <br/>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Close
+                                                                    </button>
+                                                                    <input type="submit" class="btn btn-primary"
+                                                                           value="Edit"/>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <br/>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Close
-                                                    </button>
-                                                    <input type="submit" class="btn btn-primary" value="Edit"/>
+                                                <!---->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End of "EDIT"-->
+                                    <!--  ------------------------------- Modal Window "DELETE" -------------------------------  -->
+                                    <div class="modal" th:id="${'deleteModal'+ user.getId()}" tabindex="-1"
+                                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <!-- Заголовок модального окна DELETE -->
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Delete User</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
                                                 </div>
-                                            </form>
+                                                <!-- Основное содержимое модального окна DELETE -->
+                                                <div class="modal-body text-center">
+                                                    <div class="row justify-content-center">
+                                                        <div class="col-md-6">
+                                                            <form th:method="DELETE"
+                                                                  th:action="@{/admin/{id}(id=${user.id})}"
+                                                                  th:object="${user}">
+                                                                <label for="delete_id">Id</label>
+                                                                <input class="form-control" type="number"
+                                                                       th:value="*{id}"
+                                                                       id="delete_id" th:name="id" disabled>
+                                                                <br/>
+                                                                <label for="delete_firstName">FirstName </label>
+                                                                <input class="form-control" type="text"
+                                                                       th:value="*{firstName}"
+                                                                       id="delete_firstName" th:name="firstName"
+                                                                       placeholder="vvedite firstName" disabled>
+                                                                <br/>
+                                                                <label for="delete_lastName">LastName </label>
+                                                                <input class="form-control" type="text"
+                                                                       th:value="*{lastName}"
+                                                                       id="delete_lastName" th:name="lastName"
+                                                                       placeholder="vvedite lastName" disabled>
+                                                                <br/>
+                                                                <label for="delete_email">Email</label>
+                                                                <input class="form-control" type="text"
+                                                                       th:value="*{email}"
+                                                                       id="delete_email" th:name="email"
+                                                                       placeholder="vvedite email" disabled>
+                                                                <br/>
+                                                                <div th:each="role : ${allRoles}">
+                                                                    <label th:for="${role}" th:text="${role}"/>
+                                                                    <input type="checkbox" name="selectedRoles"
+                                                                           th:checked="${user.hasRole('__${role.name}__')}"
+                                                                           th:id="${role}" th:value="${role}"
+                                                                           disabled>
+                                                                </div>
+                                                                <br/>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Close
+                                                                    </button>
+                                                                    <input type="submit" class="btn btn-danger"
+                                                                           value="Delete"/>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!---->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End of "DELETE"-->
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--Это блок под id="#nav-new_user", который раскрывается, когда
+                            нажимаешь вторую вкладку button "New user" под id "nav-new_user-tab"-->
+                        <div class="tab-pane fade" id="nav-new_user" role="tabpanel" aria-labelledby="nav-new_user-tab">
+                            <div class="text-center">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4">
+                                        <form th:method="POST" th:action="@{/admin}" th:object="${user}">
+                                            <label for="edit_firstName">FirstName </label>
+                                            <input class="form-control" type="text"
+                                                   th:value="*{firstName}"
+                                                   id="edit_firstName" th:name="firstName"
+                                                   placeholder="vvedite firstName">
+                                            <br/>
+                                            <label for="edit_lastName">LastName </label>
+                                            <input class="form-control" type="text"
+                                                   th:value="*{lastName}"
+                                                   id="edit_lastName" th:name="lastName"
+                                                   placeholder="vvedite lastName">
+                                            <br/>
+                                            <label for="edit_email">Email</label>
+                                            <input class="form-control" type="text"
+                                                   th:value="*{email}"
+                                                   id="edit_email" th:name="email"
+                                                   placeholder="vvedite email">
+
+                                            <br/>
+                                            <label for="edit_password">Password</label>
+                                            <input class="form-control" type="password"
+                                                   id="edit_password"
+                                                   th:name="password"
+                                                   placeholder="vvedite password">
+                                            <br/>
+                                            <p>Roles:</p>
+                                            <div th:each="role : ${allRoles}">
+                                                <label th:for="${role}" th:text="${role}"/>
+                                                <input type="checkbox" name="selectedRoles"
+                                                       th:checked="${user.hasRole('__${role.name}__')}"
+                                                       th:id="${role}" th:value="${role}">
+                                            </div>
+                                            <br/>
+                                            <button type="submit"class="btn btn-success">Add New User</button>
+                                        </form>
+                                        <div th:if="${errors}">
+                                            <p style="color : red" th:each="error : ${errors}" th:text="${error.defaultMessage}">Error message<p/>
                                         </div>
                                     </div>
                                 </div>
-                                <!---->
                             </div>
                         </div>
                     </div>
-                    <!--End of "EDIT"-->
-                </tr>
-                </tbody>
-            </table>
+                </div>
+                <!-- Здесь указывается вся информация при нажатии кнопки USER -->
+                <div class="tab-pane fade" id="v-pills-user" role="tabpanel" aria-labelledby="v-pills-user-tab" >
+                    <h2><b>User information-page</b></h2>
+                    <div class="border">
+                    <table class="table border table-striped">
+                        <thead>
+                        <h4>  About user</h4>
+                        <tr>
+                            <th>Id</th>
+                            <th>FirstName</th>
+                            <th>LastName</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${userPrincipal.id}"> Id</td>
+                            <td th:text="${userPrincipal.firstName}"> FirstName</td>
+                            <td th:text="${userPrincipal.lastName}"> LastName</td>
+                            <td th:text="${userPrincipal.email}"> Email</td>
+                            <div th:each="role : ${userPrincipal.roles}">
+                                <td th:text="${role.toString()}">Role Name</td>
+                            </div>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
-
-
-<div class="container">
-    <!--<a href="/logout">Logout</a>-->
-    <!--После добавление в login-form отправки CSRF-token Заменим href="/logout" на форму
-        тк теперь у нас POST запрос-->
-    <form th:action="@{/logout}" th:method="POST">
-        <input type="submit" value="Logout">
-    </form>
-
-    <form th:method="post" th:action="@{/admin}" th:object="${user}">
-        <label for="firstName">FirstName</label>
-        <input type="text" th:field="*{firstName}" id="firstName" name="firstName">
-        <br/>
-        <label for="lastName">LastName</label>
-        <input type="text" th:field="*{lastName}" id="lastName" name="lastName">
-        <br/>
-        <label for="email">Email</label>
-        <input type="text" th:field="*{email}" id="email" name="email">
-        <br/>
-        <label for="password">Password</label>
-        <input type="password" th:field="*{password}" id="password">
-        <br/>
-
-        <p>Roles:</p>
-        <div th:each="role : ${allRoles}">
-            <label th:for="${role}" th:text="${role}"/>
-            <input type="checkbox" name="selectedRoles" th:checked="${user.hasRole('__${role.name}__')}" th:id="${role}"
-                   th:value="${role}">
-        </div>
-        <input type="submit" value="Add New User"/>
-    </form>
-    <div th:if="${errors}">
-        <p style="color : red" th:each="error : ${errors}" th:text="${error.defaultMessage}">Error message
-        <p/>
-    </div>
-</div>
-
 
 <!--Подключаем JavaScript бутстрапа, включая Popper для позиционирования раскрывающихся списков,
                   всплывающие сообщения и всплывающие подсказки. Размещается перед закрывающим тегом </body>-->

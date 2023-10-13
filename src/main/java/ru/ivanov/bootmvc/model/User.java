@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
@@ -21,11 +22,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Pattern(regexp = "[A-Za-z]{2,15}", message = "firstName should be between 2 and 15 latin characters")
+    //@Pattern(regexp = "[A-Za-z]{2,15}", message = "firstName should be between 2 and 15 latin characters")
+    @Size(min = 2,max = 15)
     @Column(name = "name")
     private String firstName;
 
-    @Pattern(regexp = "[A-Za-z]{2,15}", message = "lastName should be between 2 and 15 latin characters")
+    //@Pattern(regexp = "[A-Za-z]{2,15}", message = "lastName should be between 2 and 15 latin characters")
+    @Size(min = 2,max = 15)
     @Column(name = "last_name")
     private String lastName;
 

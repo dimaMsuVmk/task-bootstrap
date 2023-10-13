@@ -12,6 +12,8 @@ import ru.ivanov.bootmvc.model.User;
 import ru.ivanov.bootmvc.repository.RoleRepository;
 import ru.ivanov.bootmvc.service.UserService;
 
+import java.security.Principal;
+
 @Controller
 public class AdminController {
     private final UserService userService;
@@ -31,11 +33,12 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String getUsers(Model model) {
+    public String getUsers(Model model, Principal principal) {
         if (model.containsAttribute("errorUser"))
             model.addAttribute("user", model.getAttribute("errorUser"));
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("allRoles", roleRepository.findAll());
+        model.addAttribute("userPrincipal",userService.findByUserName(principal.getName()));
         return "admin-panel";
 //      return "users";
     }
@@ -62,10 +65,11 @@ public class AdminController {
     }
 
     @PatchMapping("/admin/{id}")
-    public String updatePerson(@ModelAttribute("user") @Validated User updateUser, BindingResult bindingResult,
+    public String updatePerson(@ModelAttribute("user") User updateUser,
                                @RequestParam String[] selectedRoles,
                                @RequestParam Long id,
-                               RedirectAttributes redirectAttributes,Model model) {
+                               RedirectAttributes redirectAttributes,Model model
+    ) {
         for (String role : selectedRoles) {
             if (role.equals("ROLE_USER")) updateUser.getRoles().add(roleRepository.getRoleByName("ROLE_USER"));
             if (role.equals("ROLE_ADMIN")) updateUser.getRoles().add(roleRepository.getRoleByName("ROLE_ADMIN"));
