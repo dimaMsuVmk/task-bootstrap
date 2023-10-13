@@ -12,13 +12,6 @@ import ru.ivanov.bootmvc.security.handler.LoginSuccessHandler;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-// Используем стандартную аут-ю,провайдер убираем, он нужен только при кастомных аутенти-ях,
-// где есть еще логика кроме сверки userName и пароля с БД,если надо что-то еще сделать
-//    private final AuthProviderImpl authProvider;
-//    @Autowired
-//    public SecurityConfig(AuthProviderImpl authProvider){
-//        this.authProvider = authProvider;
-//    }
     private final UserDetailsService userDetailsService;
     private final LoginSuccessHandler successHandler;
     @Autowired

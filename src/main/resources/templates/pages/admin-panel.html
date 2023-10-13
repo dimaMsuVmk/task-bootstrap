@@ -101,16 +101,12 @@
                                     </td>
                                     <!-- Сама кнопка Edit и ниже прописано модальное окно для нее -->
                                     <td>
-                                        <!-- <a th:href="@{/admin/{id}/edit(id=${user.getId()})}">Edit</a> -->
                                         <button type="button" class="btn btn-info" data-bs-toggle="modal"
                                                 th:data-bs-target="'#editModal' + ${user.getId()}">Edit
                                         </button>
                                     </td>
                                     <!-- Сама кнопка Delete и ниже прописано модальное окно для нее -->
                                     <td>
-                                        <!-- <form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">-->
-                                        <!-- <input type="submit" value="Delete">-->
-                                        <!-- </form>-->
                                         <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                                 th:data-bs-target="'#deleteModal'+ ${user.getId()}">Delete
                                         </button>
