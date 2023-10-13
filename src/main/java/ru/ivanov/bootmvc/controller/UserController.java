@@ -24,7 +24,7 @@ public class UserController {
         //UsernamePasswordAuthenticationToken(Object principal, Object credentials,Collection authorities)
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = (User) userDetails;
-        model.addAttribute("user",user);
+        model.addAttribute("userPrincipal",user);
         return "user_info";
     }
 }

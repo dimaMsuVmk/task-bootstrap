@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Admin-panel</title>
@@ -20,7 +20,7 @@
                 <span class="align-middle px-2">
                     <span class="fw-bold" th:text="${userPrincipal.getEmail()} "></span>
                     with roles:
-                    <span th:each= "role:${userPrincipal.getRoles()}"
+                    <span th:each="role:${userPrincipal.getRoles()}"
                           th:text="${role.getName().replace('ROLE_','')}+'  '"></span>
                 </span>
         </div>
@@ -35,11 +35,11 @@
     <div class="row">
         <div class="col-md-2">
             <nav class="nav flex-column nav-pills" role="tablist">
-                <button class="nav-link active"
+                <button class="nav-link active" sec:authorize="hasAuthority('ADMIN')"
                         data-bs-toggle="pill" data-bs-target="#v-pills-admin"
                         type="button" role="tab" aria-controls="v-pills-admin" aria-selected="true">Admin
                 </button>
-                <button class="nav-link" id="v-pills-user-tab"
+                <button class="nav-link" id="v-pills-user-tab" sec:authorize="(hasAnyAuthority('ADMIN', 'USER'))"
                         data-bs-toggle="pill" data-bs-target="#v-pills-user"
                         type="button" role="tab" aria-controls="v-pills-user" aria-selected="false">User
                 </button>
@@ -50,7 +50,8 @@
         <!--Это то, что вызывается кнопкой Admin. Оно с id "v-pills-admin" -->
         <div class="col-md-10 bg-light">
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="v-pills-admin" role="tabpanel" aria-labelledby="v-pills-admin-tab">
+                <div class="tab-pane fade show active" id="v-pills-admin" role="tabpanel"
+                     aria-labelledby="v-pills-admin-tab">
                     <h1 class="m-2">Admin panel</h1>
                     <!--Это вкладки: "Users table" с id="nav-users_table", которая вызывает блок под id "#nav-users_table" и
                         вкладка "New user", которая вызывает блок под id #nav-new_user-->
@@ -72,7 +73,8 @@
                     <div class="tab-content">
                         <!--Этот блок - список юзеров под id #nav-users_table", который раскрывается,
                             когда нажимаешь button "Users table"-->
-                        <div class="tab-pane fade show active" id="nav-users_table" role="tabpanel" aria-labelledby="nav-users_table-tab">
+                        <div class="tab-pane fade show active" id="nav-users_table" role="tabpanel"
+                             aria-labelledby="nav-users_table-tab">
                             <table class="table border table-striped">
                                 <thead>
                                 <h2>AllUsers</h2>
@@ -92,10 +94,12 @@
                                     <td th:text="${user.firstName}"> FirstName</td>
                                     <td th:text="${user.lastName}"> LastName</td>
                                     <td th:text="${user.email}"> Email</td>
-                                    <div th:each="role : ${user.roles}">
-                                        <td th:text="${role.toString()}">Role Name</td>
-                                        <br>
-                                    </div>
+                                    <td>
+                                        <div th:each="role : ${user.roles}">
+                                            <span th:text="${role.toString()}">Role Name</span>
+                                            <br>
+                                        </div>
+                                    </td>
                                     <!-- Сама кнопка Edit и ниже прописано модальное окно для нее -->
                                     <td>
                                         <!-- <a th:href="@{/admin/{id}/edit(id=${user.getId()})}">Edit</a> -->
@@ -262,28 +266,28 @@
                                 <div class="row justify-content-center">
                                     <div class="col-md-4">
                                         <form th:method="POST" th:action="@{/admin}" th:object="${user}">
-                                            <label for="edit_firstName">FirstName </label>
+                                            <label for="new_firstName">FirstName </label>
                                             <input class="form-control" type="text"
                                                    th:value="*{firstName}"
-                                                   id="edit_firstName" th:name="firstName"
+                                                   id="new_firstName" th:name="firstName"
                                                    placeholder="vvedite firstName">
                                             <br/>
-                                            <label for="edit_lastName">LastName </label>
+                                            <label for="new_lastName">LastName </label>
                                             <input class="form-control" type="text"
                                                    th:value="*{lastName}"
-                                                   id="edit_lastName" th:name="lastName"
+                                                   id="new_lastName" th:name="lastName"
                                                    placeholder="vvedite lastName">
                                             <br/>
-                                            <label for="edit_email">Email</label>
+                                            <label for="new_email">Email</label>
                                             <input class="form-control" type="text"
                                                    th:value="*{email}"
-                                                   id="edit_email" th:name="email"
+                                                   id="new_email" th:name="email"
                                                    placeholder="vvedite email">
 
                                             <br/>
-                                            <label for="edit_password">Password</label>
+                                            <label for="new_password">Password</label>
                                             <input class="form-control" type="password"
-                                                   id="edit_password"
+                                                   id="new_password"
                                                    th:name="password"
                                                    placeholder="vvedite password">
                                             <br/>
@@ -295,10 +299,12 @@
                                                        th:id="${role}" th:value="${role}">
                                             </div>
                                             <br/>
-                                            <button type="submit"class="btn btn-success">Add New User</button>
+                                            <button type="submit" class="btn btn-success">Add New User</button>
                                         </form>
                                         <div th:if="${errors}">
-                                            <p style="color : red" th:each="error : ${errors}" th:text="${error.defaultMessage}">Error message<p/>
+                                            <p style="color : red" th:each="error : ${errors}"
+                                               th:text="${error.defaultMessage}">Error message
+                                            <p/>
                                         </div>
                                     </div>
                                 </div>
@@ -307,32 +313,32 @@
                     </div>
                 </div>
                 <!-- Здесь указывается вся информация при нажатии кнопки USER -->
-                <div class="tab-pane fade" id="v-pills-user" role="tabpanel" aria-labelledby="v-pills-user-tab" >
+                <div class="tab-pane fade" id="v-pills-user" role="tabpanel" aria-labelledby="v-pills-user-tab">
                     <h2><b>User information-page</b></h2>
                     <div class="border">
-                    <table class="table border table-striped">
-                        <thead>
-                        <h4>  About user</h4>
-                        <tr>
-                            <th>Id</th>
-                            <th>FirstName</th>
-                            <th>LastName</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td th:text="${userPrincipal.id}"> Id</td>
-                            <td th:text="${userPrincipal.firstName}"> FirstName</td>
-                            <td th:text="${userPrincipal.lastName}"> LastName</td>
-                            <td th:text="${userPrincipal.email}"> Email</td>
-                            <div th:each="role : ${userPrincipal.roles}">
-                                <td th:text="${role.toString()}">Role Name</td>
-                            </div>
-                        </tr>
-                        </tbody>
-                    </table>
+                        <table class="table border table-striped">
+                            <thead>
+                            <h4> About user</h4>
+                            <tr>
+                                <th>Id</th>
+                                <th>FirstName</th>
+                                <th>LastName</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td th:text="${userPrincipal.id}"> Id</td>
+                                <td th:text="${userPrincipal.firstName}"> FirstName</td>
+                                <td th:text="${userPrincipal.lastName}"> LastName</td>
+                                <td th:text="${userPrincipal.email}"> Email</td>
+                                <div th:each="role : ${userPrincipal.roles}">
+                                    <td th:text="${role.toString()}">Role Name</td>
+                                </div>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
